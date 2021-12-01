@@ -3,7 +3,7 @@ package main
 import (
 	"embed"
 	"fmt"
-	xfs "io/fs"
+	fs "io/fs"
 	"log"
 	"net"
 	"net/http"
@@ -16,7 +16,7 @@ import (
 )
 
 //go:embed build
-var fs embed.FS
+var bfs embed.FS
 
 // Go types that are bound to the UI must be thread-safe, because each binding
 // is executed in its own goroutine. In this simple case we may use atomic
@@ -76,7 +76,7 @@ func main() {
 	}
 	defer ln.Close()
 
-	subFs, _ := xfs.Sub(fs, "build")
+	subFs, _ := fs.Sub(bfs, "build")
 	go http.Serve(ln, http.FileServer(http.FS(subFs)))
 	ui.Load(fmt.Sprintf("http://%s", ln.Addr()))
 
